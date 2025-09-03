@@ -57,11 +57,6 @@ namespace ncdu_code
             if (size >= 1024)
             {
                 size /= 1024;
-                unit = "KiB";
-            }
-            if (size >= 1024)
-            {
-                size /= 1024;
                 unit = "MiB";
             }
             if (size >= 1024)
