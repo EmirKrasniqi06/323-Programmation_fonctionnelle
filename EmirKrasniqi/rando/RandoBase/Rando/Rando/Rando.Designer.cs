@@ -30,12 +30,12 @@
         {
             SuspendLayout();
             // 
-            // Form1
+            // map
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(700, 1000);
-            Name = "Form1";
+            Name = "map";
             Text = "Rando";
             Paint += Rando_Form_Paint;
             ResumeLayout(false);
