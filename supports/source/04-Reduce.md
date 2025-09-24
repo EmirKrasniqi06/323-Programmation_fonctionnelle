@@ -62,11 +62,12 @@ List<Person> cid5d = new List<Person>(){
     new Person(){Name="Claude",Age=17,Sisters=0,Brothers=0}
 };
 
-// Faire des groupes en fonction du nombre de frère/soeur
+// Faire des groupes en fonction de la taille de la famille
 var groups = cid5d
     .GroupBy(p => p.Sisters+p.Brothers)
+    .OrderBy(g => g.Key)
     .Select(group => new {                  // Objet anonyme
-        Agegroup = group.Key,
+        FamilySize = group.Key,
         Members = group.Select(p => p.Name)
     })
     .ToList();
@@ -74,11 +75,17 @@ var groups = cid5d
 // Affichage
 groups.ForEach(group =>
 {
-    Console.Write(String.Join(",", group.Members));
-    Console.Write(group.Members.Count() > 1 ? " ont " : " a ");
-    Console.Write(group.Agegroup + " frère/soeur");
-    Console.WriteLine();
+    Console.WriteLine($"Famille de {group.FamilySize}: {String.Join(",", group.Members)}");
 });
+```
+
+Résultat:
+
+```
+Famille de 0: Claude
+Famille de 1: Germaine,Pierre,Sylvie
+Famille de 3: Paul,Helmut,Ernest,Sidonie
+Famille de 4: Lucie
 ```
 
 ### Aggrégateur générique
@@ -138,6 +145,8 @@ var min = cid5d.Aggregate(
 
 - 0
 - Paul
+- Germaine
+- Sylvie
 - Claude
 - 1
 - ...
