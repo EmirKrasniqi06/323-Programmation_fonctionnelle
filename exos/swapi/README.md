@@ -8,14 +8,79 @@ Vous avez compris de quoi il s'agit ? Alors ... à vous jouer!
 
 ![Screenshot](images/screenshot_20250923_141854.png)
 
-## Planète 0
+## Préparatifs de vol : API, Json et extensions
+Pour commencer avec SWAPI, quelques informations ou rappels.
+
+### API http
+Une API WEB est exposée via le protocole HTTP (qui lui même se base sur TCP...).
+Pour réaliser cela en C#, voici deux manières, une asynchrone et l’autre synchrone:
+
+``` csharp
+//Un client global pour éviter de surcharger l'OS et profiter d'un socket avec tout son contexte
+//pour toutes les requêtes (DNS,TCP,...)
+private HttpClient client = new HttpClient();
+
+string HttpGet(HttpClient client,string query)
+{
+    var json = HttpGetAsync(client,query).ConfigureAwait(false).GetAwaiter().GetResult();
+    return json;
+}
+async Task<string> HttpGetAsync(HttpClient client,string query)
+{
+    var response = await client.GetAsync(query.Contains("https") ? query : "https://swapi.dev/api/" + query);
+    response.EnsureSuccessStatusCode();
+    var json = await response.Content.ReadAsStringAsync();
+
+    return json;
+}
+
+```
+
+### JSON
+Le Json est un format texte structuré. On peut le ‘parser’ manuellement, utiliser un package nuget (NewtonSoft par exemple) toutefois depuis .NET6, c’est integré au framework.
+Voici comment convertir un Json vers une classe
+
+``` csharp
+//Import de la librairie
+using System.Text.Json;
+
+//Récupération du json
+var moviesJson = HttpGet(client,"films");
+
+//Conversion Json vers une classe définie
+var moviesResult = JsonSerializer.Deserialize<FilmResult>(moviesJson);
+
+//Récupération d'une sous-partie
+var movies = moviesResult.results;
+
+//Définition des classes
+class FilmResult
+{
+    public int count { get; set; }
+    public List<Film> results { get; set; }
+}
+
+class Film
+{
+    public string title { get; set; }
+    public List<string> characters { get; set; }
+}
+
+```
+
+> On voit donc qu’on peut choisir les attributs qu’on veut récupérer...
+
+> La nouveauté: ‘JsonSerializer.Deserialize<ClasseDestination>(JSON)’ 
+
+### Extensions
+
 Avant d’attaquer les exercices suivants, autant profiter de la [théorie sur les extensions](../../supports/source/05-Extension.md) pour se faciliter la tâche.
 
-### Affichage "magique"
+#### Affichage "magique" ####
 
 Jusqu’à maintenant, pour afficher le contenu retourné par un filtre ou une transformation, il fallait passer par
 
-#### Actuel
+##### Actuel #####
 
 ``` csharp
 result.ToList().ForEach(item=>Console.WriteLine(item));
@@ -29,19 +94,22 @@ Console.WriteLine(String.Join(result.Select(item=>item.X)));
 
 Bref c’est *fastidieux*...
 
-#### Objectif
+##### Objectif #####
+
 Idéalement, on voudrait juste écrire quelquechose comme:
 
 ``` csharp
 result.Write();
 ```
 
-##### Étapes
+###### Étapes ######
+
 1. Créer une classe publique statique nommée Extension (nom libre)
 2. Ajouter une méthode statique ne retournant rien et nommée ‘Write’
 3. Ajouter un argument de type IEnumerable idéalement compatible avec tout type
 
-#### Implémentation
+##### Implémentation #####
+
 Voici une version possible:
 
 ![Screenshot](images/screenshot_20250923_140333.png)
@@ -49,6 +117,15 @@ Voici une version possible:
 > Ceci implique que les objets (classes) utilisées doivent avoir une méthode ‘toString’ pertinente, comme par exemple ci-dessous:
 
 ![Screenshot](images/screenshot_20250923_141004.png)
+
+##### Avec SWAPI
+
+``` csharp
+movies.Write();
+```
+
+> Ça ne fonctionne pas ? Le ‘Write’ est dépendant de la méthode ‘ToString’ des objets traités... Il faut donc
+> probablement ‘overrider’ cette méthode dans la classe qu’on veut afficher...
 
 
 ## Planète 1
