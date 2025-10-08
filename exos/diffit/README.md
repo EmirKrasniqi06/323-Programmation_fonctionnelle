@@ -12,7 +12,7 @@ Compléter les **TODO** de [Program.cs](Program.cs) en utilisant les fichiers ex
 
 OU
 
-- [Utiliser l’éxécutable dépendant du framework](diffit.exe)
+- [Utiliser l’éxécutable dépendant du framework (depuis votre poste seul.)](binary/diffit.exe)
 
 ## Aide
 - [Cheatsheet](../../supports/linq-cheatsheet.pdf)

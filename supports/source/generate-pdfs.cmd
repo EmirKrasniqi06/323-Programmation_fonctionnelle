@@ -1,1 +1,1 @@
-md-2-pdf --config-file md-to-pdf.json *.md && mv *.pdf ..\
+md2pdf --config-file md-to-pdf.json %* && mv *.pdf ..\
